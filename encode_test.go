@@ -11,8 +11,8 @@ import (
 	"net"
 	"os"
 
+	yaml "github.com/mobiledgex/yaml/v2"
 	. "gopkg.in/check.v1"
-	"gopkg.in/yaml.v2"
 )
 
 type jsonNumberT string
