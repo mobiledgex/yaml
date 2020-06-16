@@ -33,11 +33,13 @@ type encoder struct {
 	flow    bool
 	// doneInit holds whether the initial stream_start_event has been
 	// emitted.
-	doneInit bool
+	doneInit  bool
+	omitEmpty bool
 }
 
 func newEncoder() *encoder {
 	e := &encoder{}
+	e.omitEmpty = true
 	yaml_emitter_initialize(&e.emitter)
 	yaml_emitter_set_output_string(&e.emitter, &e.out)
 	yaml_emitter_set_unicode(&e.emitter, true)
@@ -46,6 +48,7 @@ func newEncoder() *encoder {
 
 func newEncoderWithWriter(w io.Writer) *encoder {
 	e := &encoder{}
+	e.omitEmpty = true
 	yaml_emitter_initialize(&e.emitter)
 	yaml_emitter_set_output_writer(&e.emitter, w)
 	yaml_emitter_set_unicode(&e.emitter, true)
@@ -218,7 +221,7 @@ func (e *encoder) structv(tag string, in reflect.Value) {
 			} else {
 				value = in.FieldByIndex(info.Inline)
 			}
-			if (info.OmitEmpty || AlwaysOmitEmpty) && isZero(value) {
+			if (info.OmitEmpty || e.omitEmpty) && isZero(value) {
 				continue
 			}
 			e.marshal("", reflect.ValueOf(info.Key))
