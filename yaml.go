@@ -89,9 +89,6 @@ func UnmarshalStrict(in []byte, out interface{}) (err error) {
 	return unmarshal(in, out, true)
 }
 
-// AlwaysOmitEmpty will always omit empty fields if true.
-var AlwaysOmitEmpty = true
-
 // A Decorder reads and decodes YAML values from an input stream.
 type Decoder struct {
 	strict bool
@@ -234,6 +231,10 @@ func (e *Encoder) Encode(v interface{}) (err error) {
 	defer handleErr(&err)
 	e.encoder.marshalDoc("", reflect.ValueOf(v))
 	return nil
+}
+
+func (e *Encoder) SetOmitEmpty(omitEmpty bool) {
+	e.encoder.omitEmpty = omitEmpty
 }
 
 // Close closes the encoder by writing any remaining data.
